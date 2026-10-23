@@ -76,12 +76,15 @@ RUN groupadd --system --gid 10001 openjarvis && \
     useradd --system --uid 10001 --gid openjarvis \
         --create-home --home-dir /home/openjarvis openjarvis
 ENV HOME=/home/openjarvis
-USER openjarvis
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gosu && \
+    rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 
 # Keep `jarvis` as the image entrypoint so Docker and Compose command overrides
 # remain subcommands (for example, `docker run IMAGE serve ...`). Platforms
 # such as Render replace CMD while preserving this entrypoint.
-ENTRYPOINT ["jarvis"]
+ENTRYPOINT ["/bin/sh", "-c", "chown -R 10001:10001 /home/openjarvis/.openjarvis && exec gosu openjarvis jarvis \"$@\"", "--"]
 CMD ["serve", "--host", "0.0.0.0", "--port", "8000"]
