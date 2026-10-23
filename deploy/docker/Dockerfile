@@ -25,7 +25,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
         sh -s -- -y --profile minimal --default-toolchain none && \
-    rustup toolchain install 1.88 --profile minimal && \
+    rustup toolchain install stable --profile minimal && \
     rustup default stable
 
 WORKDIR /app
